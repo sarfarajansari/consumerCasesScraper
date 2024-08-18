@@ -14,6 +14,9 @@ threads = []
 judgement_links = pd.read_csv('data/judgement_links.csv').values.tolist()
 
 
+SLEEP = 60
+NUMBER_OF_THREADS = 10
+
 def get_judgement_data(item, index, attempt=0):
     try:
         title, link, full_url, year = item
@@ -25,7 +28,7 @@ def get_judgement_data(item, index, attempt=0):
             if attempt > 3:
                 print('Attempt limit reached:', attempt)
                 return
-            time.sleep(30)
+            time.sleep(SLEEP)
             return get_judgement_data(item, index, attempt+1)
         html = res.text
         soup = BeautifulSoup(html, 'lxml')
@@ -70,12 +73,12 @@ def get_judgement_data(item, index, attempt=0):
         if attempt > 3:
             print('Attempt limit reached:', attempt)
             return
-        time.sleep(30)
+        time.sleep(SLEEP)
         return get_judgement_data(item, index, attempt+1)
 
 
 for index, item in enumerate(judgement_links):
-    if len(threads) > 10:
+    if len(threads) >= NUMBER_OF_THREADS:
         for t in threads:
             t.join()
         threads.clear()
