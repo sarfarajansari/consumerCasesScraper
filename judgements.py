@@ -75,7 +75,7 @@ def get_judgement_data(item, index, attempt=0):
         return get_judgement_data(item, index, attempt+1)
 
 
-for index, item in enumerate(judgement_links[:5]):
+for index, item in enumerate(judgement_links):
     if len(threads) > 15:
         for t in threads:
             t.join()
