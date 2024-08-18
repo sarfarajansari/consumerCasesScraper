@@ -11,7 +11,7 @@ from threading import Thread
 
 threads = []
 
-years_data = pd.read_csv('data/yearlinks.csv').values.tolist()
+search_links = pd.read_csv('data/searchlinks.csv').values.tolist()
 
 judgement_links = []
 
@@ -25,10 +25,15 @@ def join_url(url):
     return domain + '/' + url
 
 
-def get_data(year,url,page=1):
-    print(f'{page}.Extracting data for year:',year)
+def get_data(search_id,url,page=1):
+    print(f'{page}.Extracting data for year:',search_id)
     full_url =join_url(url)
-    data = requests.get(full_url).text
+    res = requests.get(full_url)
+
+    if res.status_code != 200:
+        print('Error:',res.status_code,res.text)
+        return
+    data = res.text
     soup = BeautifulSoup(data, 'lxml')
 
 
@@ -37,18 +42,25 @@ def get_data(year,url,page=1):
     for result in results:
         title = result.text
         link = domain + result.get('href')
-        judgement_links.append((title,link,full_url,year))
+        judgement_links.append((title,link,full_url,search_id))
 
     
     next = [a.get('href') for a in soup.select('.bottom > a') if a.text == 'Next']
 
     
 
+
+
+
+    
+
     if len(next) > 0:
         # print('Next page:',domain + next[0])
-        return get_data(year, next[0],page+1)
+        return get_data(search_id, next[0],page+1)
     
-    print('No more pages for year:',year, 'last page:',page)
+    
+    if page==40:
+        print('No more pages for id:',search_id, 'last page:',page)
 
 
 
@@ -56,17 +68,15 @@ def get_data(year,url,page=1):
 
 
 
+for searchitem in search_links:
 
-
-for year in years_data:
-
-    if len(threads)>5:
+    if len(threads)>15:
         for t in threads:
             t.join()
         threads.clear()
 
 
-    t = Thread(target=get_data,args=(year[0],year[1]))
+    t = Thread(target=get_data,args=(searchitem[0],searchitem[1]))
     t.start()
     threads.append(t)
     
