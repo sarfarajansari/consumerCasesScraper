@@ -70,7 +70,7 @@ def get_data(search_id,url,page=1):
 
 for searchitem in search_links:
 
-    if len(threads)>15:
+    if len(threads)>5:
         for t in threads:
             t.join()
         threads.clear()
