@@ -4,7 +4,7 @@ from datetime import datetime
 from threading import Thread
 import pandas as pd
 domain= 'https://indiankanoon.org'
-
+import time
 
 
 
@@ -13,10 +13,21 @@ threads = []
 
 judgement_links = pd.read_csv('data/judgement_links.csv').values.tolist()
 
-def get_judgement_data(item):
+def get_judgement_data(item,attempt=0):
     try:
         title,link,full_url,year = item
-        html = requests.get(link).text
+        res = requests.get(link)
+
+        if res.status_code != 200:
+            print('Error:',res.status_code,res.text)
+            print("Waiting for 10 seconds")
+
+            if attempt>3:
+                print('Attempt limit reached:',attempt)
+                return
+            time.sleep(10)
+            return get_judgement_data(item,attempt+1)
+        html = res.text
         soup = BeautifulSoup(html, 'lxml')
         judgement_div:Tag = soup.select_one('.judgments')
         if not judgement_div:
@@ -46,6 +57,12 @@ def get_judgement_data(item):
         print(e)
         print(item)
         print('-------------------')
+
+        if attempt>3:
+            print('Attempt limit reached:',attempt)
+            return
+        time.sleep(10)
+        return get_judgement_data(item,attempt+1)
 
 
 
