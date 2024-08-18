@@ -50,7 +50,7 @@ def get_judgement_data(item):
 
 
 for item in judgement_links:
-    if len(threads) > 12:
+    if len(threads) > 5:
         for t in threads:
             t.join()
         threads.clear()

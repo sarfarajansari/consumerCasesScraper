@@ -45,8 +45,10 @@ def get_data(year,url,page=1):
     
 
     if len(next) > 0:
-        print('Next page:',domain + next[0])
-        get_data(year, next[0],page+1)
+        # print('Next page:',domain + next[0])
+        return get_data(year, next[0],page+1)
+    
+    print('No more pages for year:',year, 'last page:',page)
 
 
 
@@ -58,7 +60,7 @@ def get_data(year,url,page=1):
 
 for year in years_data:
 
-    if len(threads)>12:
+    if len(threads)>5:
         for t in threads:
             t.join()
         threads.clear()
