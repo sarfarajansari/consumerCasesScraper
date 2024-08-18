@@ -20,13 +20,12 @@ def get_judgement_data(item, index, attempt=0):
         res = requests.get(link)
 
         if res.status_code != 200:
-            print('Error:', res.status_code, res.text)
-            print("Waiting for 10 seconds")
+            print('Error:', res.status_code, title,"Waiting for 30 seconds")
 
             if attempt > 3:
                 print('Attempt limit reached:', attempt)
                 return
-            time.sleep(10)
+            time.sleep(30)
             return get_judgement_data(item, index, attempt+1)
         html = res.text
         soup = BeautifulSoup(html, 'lxml')
@@ -64,19 +63,19 @@ def get_judgement_data(item, index, attempt=0):
         # })
 
     except Exception as e:
-        print(e)
-        print(item)
+        # print(e)
+        print("Error", item[0], "Waiting for 30 seconds")
         print('-------------------')
 
         if attempt > 3:
             print('Attempt limit reached:', attempt)
             return
-        time.sleep(5)
+        time.sleep(30)
         return get_judgement_data(item, index, attempt+1)
 
 
 for index, item in enumerate(judgement_links):
-    if len(threads) > 15:
+    if len(threads) > 20:
         for t in threads:
             t.join()
         threads.clear()
