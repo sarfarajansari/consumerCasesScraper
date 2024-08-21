@@ -11,7 +11,7 @@ domain = 'https://indiankanoon.org'
 data = []
 threads = []
 
-judgement_links = pd.read_csv('data/judgement_links.csv').values.tolist()
+judgement_links = pd.read_csv('data/filtered_file.csv').values.tolist()
 
 
 SLEEP = 60
@@ -23,7 +23,7 @@ def get_judgement_data(item, index, attempt=0):
         res = requests.get(link)
 
         if res.status_code != 200:
-            print('Error:', res.status_code, title,"Waiting for 30 seconds")
+            print('Error:', res.status_code, title,f"Waiting for {SLEEP} seconds")
 
             if attempt > 3:
                 print('Attempt limit reached:', attempt)
@@ -67,7 +67,7 @@ def get_judgement_data(item, index, attempt=0):
 
     except Exception as e:
         # print(e)
-        print("Error", item[0], "Waiting for 30 seconds")
+        print("Error", item[0], f"Waiting for {SLEEP} seconds")
         print('-------------------')
 
         if attempt > 3:
